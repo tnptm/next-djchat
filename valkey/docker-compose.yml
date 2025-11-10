@@ -1,0 +1,27 @@
+services:
+  valkey:
+    image: valkey/valkey:latest
+    container_name: valkey-chat
+    ports:
+      - "6380:6379"
+    volumes:
+      - ./valkey_data:/data
+    command: >
+      valkey-server
+      --requirepass ${VALKEY_REDIS_PASSWORD}
+      --save 150 100
+      --appendonly yes
+      --maxmemory 256mb
+      --maxmemory-policy allkeys-lru
+    
+    # --save 900 1
+    # --save 60 10000
+      
+    restart: unless-stopped
+
+
+volumes:
+  valkey_data:
+
+#  userlist.txt:
+#  pgbouncer.ini:

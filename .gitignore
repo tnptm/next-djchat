@@ -11,3 +11,5 @@ wheels/
 djchat/.env
 djchat/chatapi/migrations/0*.py
 djchat/db.sqlite3
+valkey/.env
+valkey/valkey_data/*
