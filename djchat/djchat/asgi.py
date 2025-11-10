@@ -16,7 +16,7 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "djchat.settings")
 
 # Get the Django ASGI application (for HTTP)
 django_asgi_app = get_asgi_application()
-
+#from channels.http import AsgiHandler
 from channels.routing import ProtocolTypeRouter, URLRouter
 from channels.auth import AuthMiddlewareStack
 from chatapi.routing import websocket_urlpatterns

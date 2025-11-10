@@ -85,7 +85,9 @@ CORS_ALLOW_ALL_ORIGINS = True
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
-        "CONFIG": {"hosts": [("127.0.0.1", 6379)]},
+        "CONFIG": {
+                    "hosts": [f"redis://:{os.getenv('VALKEY_REDIS_PASSWORD')}@127.0.0.1:6380/0"], 
+        },
     }
 }
 
