@@ -7,7 +7,7 @@ export default function ChatPage() {
     const {user, logout} = useAuth();
     return (
         <>
-            <div>Welcome {user?.username} to the Chat Page!
+            <div>Welcome <span className="font-semibold text-lg text-red-500">{user?.username}</span> to the Chat Page!
             <button className="ml-4 text-blue-500 font-semibold cursor-pointer hover:underline" onClick={logout}>Log out</button></div>
             <div>
                 <WebSocketStatus />

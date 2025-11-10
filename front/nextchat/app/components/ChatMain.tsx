@@ -1,15 +1,27 @@
 'use client';
-import {useState, useEffect} from 'react';
+import {useState, useEffect, useRef} from 'react';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import { useWebSocket, useRoomWebSocket } from '../context/WebSocketContext';
 import ChatAddRoom from './chat/ChatAddRoom';
+//import ChatFileUpload from './chat/ChatFileUpload';
+import ChatMessageSender from './chat/ChatMessageSender';
+import ChatMessages from './chat/ChatMessages';
+
+interface ChatAttachment {
+    id: string;
+    file_url: string;
+    file_size: number;
+    content_type: string;
+}
 
 interface ChatMessage {
     id: number;
     plaintext: string;
     sender: string;
     created_at: string;
+    room_id?: string;
+    attachments?: ChatAttachment[];
 }
 
 interface ChatRoom {
@@ -20,21 +32,8 @@ interface ChatRoom {
     is_private?: boolean;
     member_usernames?: string[];
 }
-/*
-const messagesData: ChatMessage[] = [
-    { id: 1, content: 'Hello! How can I help you today?', sender: 'System', timestamp: '2024-06-01T10:00:00Z' },
-    { id: 2, content: 'What is the weather like?', sender: 'User', timestamp: '2024-06-01T10:01:00Z' },
-    { id: 3, content: 'Tell me a joke!', sender: 'User', timestamp: '2024-06-01T10:02:00Z' },
-    { id: 4, content: 'What is the capital of France?', sender: 'User', timestamp: '2024-06-01T10:03:00Z' },
-    { id: 5, content: 'How do I make a cake?', sender: 'User', timestamp: '2024-06-01T10:04:00Z' },
-]
 
-const chatRoomsData: ChatRoom[] = [
-    { id: 1, name: 'General', invitedUsernames: [] },
-    { id: 2, name: 'Tech Talk', invitedUsernames: [] },
-    { id: 3, name: 'Random', invitedUsernames: [] },
-];
-*/
+
 export default function ChatMain({user}: {user: any}) {
     const [messages, setMessages] = useState<ChatMessage[]>([]);
     const [input, setInput] = useState('');
@@ -45,7 +44,10 @@ export default function ChatMain({user}: {user: any}) {
     const [selectedRoom, setSelectedRoom] = useState<ChatRoom | null>(null);
     const {tokens} = useAuth();
     const ws = useWebSocket();
-    
+
+
+
+
     // Use room-specific WebSocket hook
     const { newMessage, isConnected } = useRoomWebSocket(
         selectedRoom?.id ? String(selectedRoom.id) : null
@@ -128,52 +130,9 @@ export default function ChatMain({user}: {user: any}) {
         }
     }, [newMessage, selectedRoom, tokens.accessToken]);
 
-    // File upload states
-    /*
-    const [file, setFile] = useState<File | null>(null);
-    const [filePreview, setFilePreview] = useState<string | null>(null);
-    const [isDragging, setIsDragging] = useState(false);
-    const [uploadProgress, setUploadProgress] = useState(0);
-    const [isUploading, setIsUploading] = useState(false);
-        */
 
-    const handleSendMessage = () => {
-        if (input.trim()) {
-            // Send message to backend api /api/rooms/{selectedRoom.id}/messages
-            if (selectedRoom) {
-                axios.post(`http://localhost:8000/api/rooms/${selectedRoom.id}/messages/`, {
-                    plaintext: input,
-                }, {
-                    headers: {
-                        Authorization: `Bearer ${tokens.accessToken}`,
-                    },
-                })
-                .then(response => {
-                    // Append new message to state
-                    setMessages(prevMessages => [...prevMessages, response.data]);
-                    setInput('');
-                })
-                .catch(error => {
-                    console.error('Error sending message:', error);
-                });
-            }
-            /*setMessages(prevMessages => [
-                ...prevMessages,
-                {
-                id: prevMessages.length + 1,
-                content: input,
-                sender: user?.username || 'User',
-                timestamp: new Date().toISOString(),
-                },
-            ]);
-            setInput('');*/
-        }
-    };
 
-    const handleSendFile = () => {
-        // Implement file sending logic here
-        alert('File sending not implemented yet.');
-    };
+ 
 
     const toggleRoomAddInput = () => {
         setViewRoomAddInput(!viewRoomAddInput);
@@ -208,15 +167,7 @@ export default function ChatMain({user}: {user: any}) {
             } catch (error) {
                 console.error('Error creating chat room:', error);
             }
-        /*setChatRooms(prevRooms => [
-            ...prevRooms,
-            {
-            id: prevRooms.length + 1,
-            name: newRoomName,
-            },
-        ]);
-        setNewRoomName('');
-        setViewRoomAddInput(false);*/
+
         }
     }
 
@@ -247,19 +198,11 @@ export default function ChatMain({user}: {user: any}) {
                     )}
                 </aside>
                 <div className=" w-full pr-4">
-                    <div className="overflow-y-auto p-4 bg-stone-100 mb-4 w-full h-[500px]">
-                        {/* Chat messages will be rendered here */}
-                        {
-                            messages.map((msg, index) => (
-                                <div key={index} className="mb-2">
-                                    <div className={`flex rounded px-4 py-2 text-gray-700 w-fit ${msg.sender === user?.username ? 'bg-amber-200 ml-auto' : 'bg-purple-200'}`}>
-                                        {new Date(msg.created_at).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })} {msg.sender}: {msg.plaintext}
-                                    </div>
-                                </div>
-                        ))}
-                    </div>
-                    {/* Chat input field will be rendered here */}
-                    <div className="flex w-full justify-between">
+                    
+                    <ChatMessages messages={messages}/>
+                    
+
+                    {/*<div className="flex w-full justify-between">
                         <input
                             type="text"
                             placeholder="Type your message..."
@@ -279,9 +222,56 @@ export default function ChatMain({user}: {user: any}) {
                         >
                             Send
                         </button>
+                    </div>*/}
+                    <div>
+                        <ChatMessageSender
+                            roomId={selectedRoom ? String(selectedRoom.id) : ''}
+                            onMessageSent={(message: any) => {
+                                setMessages(prevMessages => [...prevMessages, message]);
+                            }}
+                        />
                     </div>
                 </div>
             </div>
         </div>
     );
 }
+   /*const handleSendMessage = () => {
+        if (input.trim()) {
+            // Send message to backend api /api/rooms/{selectedRoom.id}/messages
+            if (selectedRoom) {
+                axios.post(`http://localhost:8000/api/rooms/${selectedRoom.id}/messages/`, {
+                    plaintext: input,
+                }, {
+                    headers: {
+                        Authorization: `Bearer ${tokens.accessToken}`,
+                    },
+                })
+                .then(response => {
+                    // Append new message to state
+                    setMessages(prevMessages => [...prevMessages, response.data]);
+                    setInput('');
+                })
+                .catch(error => {
+                    console.error('Error sending message:', error);
+                });
+            }
+            /*setMessages(prevMessages => [
+                ...prevMessages,
+                {
+                id: prevMessages.length + 1,
+                content: input,
+                sender: user?.username || 'User',
+                timestamp: new Date().toISOString(),
+                },
+            ]);
+            setInput('');
+        }
+    };*/
+
+    //const [ showFileUpload, setShowFileUpload ] = useState(false);
+    /*const handleSendFile = () => {
+        // Implement file sending logic here
+        //alert('File sending not implemented yet.');
+        setShowFileUpload(!showFileUpload);
+    };*/

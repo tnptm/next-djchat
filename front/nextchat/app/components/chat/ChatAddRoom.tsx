@@ -22,7 +22,7 @@ export default function ChatAddRoom({ onCreateRoom }: ChatAddRoomProps) {
         isPrivate: false,
     });
     return (
-        <div className="mt-2">
+        <div className="mt-2 p-2 border border-gray-300 rounded bg-gray-100">
             <input
                 type="text"
                 placeholder="Room Name"
