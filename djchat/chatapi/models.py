@@ -80,6 +80,9 @@ class Message(models.Model):
     ciphertext = models.BinaryField()  # encrypted message bytes
     nonce = models.BinaryField(null=True, blank=True)  # if using AES-GCM with nonce
     created_at = models.DateTimeField(auto_now_add=True)
+    #attachments = models.ManyToManyField(
+    #    "FileAttachment", related_name="messages", blank=True
+    #)
     # add delivered/read booleans as needed
 
 

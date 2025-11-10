@@ -1,15 +1,15 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import get_object_or_404 #render
 
 # Create your views here.
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework import status
-from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
+from rest_framework.parsers import MultiPartParser, FormParser #, JSONParser
 from rest_framework_simplejwt.tokens import RefreshToken
 from .models import Room, Message, User, Membership, FileAttachment
 from .serializers import (
-    MessageSerializer,
+    # MessageSerializer,
     UserSerializer,
     RoomSerializer,
     RoomCreateSerializer,
@@ -28,7 +28,7 @@ class RegisterView(APIView):
         serializer = RegisterSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
-        refresh = RefreshToken.for_user(user)
+        refresh = RefreshToken.for_user(user)  # type: ignore
         return Response(
             {
                 "user": UserSerializer(user).data,
@@ -174,18 +174,19 @@ class RoomMessagesView(APIView):
         )
 
         # Notify via channels
-        #from asgiref.sync import async_to_sync
-        #from channels.layers import get_channel_layer
+        from asgiref.sync import async_to_sync
+        from channels.layers import get_channel_layer
 
-        #channel_layer = get_channel_layer()
-        #async_to_sync(channel_layer.group_send)(
-        #    f"room_{room.id}",
-        #    {
-        #        "type": "new.message",
-        #        "room_id": str(room.id),
-        #        "message_id": str(msg.id),
-        #    },
-        #)
+        channel_layer = get_channel_layer()
+        if channel_layer is not None:
+            async_to_sync(channel_layer.group_send)(
+                f"room_{room.id}",
+                {
+                    "type": "new.message",
+                    "room_id": str(room.id),
+                    "message_id": str(msg.id),
+                },
+            )
 
         return Response(
             {
@@ -251,14 +252,15 @@ class FileUploadView(APIView):
         from channels.layers import get_channel_layer
 
         channel_layer = get_channel_layer()
-        async_to_sync(channel_layer.group_send)(
-            f"room_{room.id}",
-            {
-                "type": "new.message",
-                "room_id": str(room.id),
-                "message_id": str(msg.id),
-            },
-        )
+        if channel_layer is not None:
+            async_to_sync(channel_layer.group_send)(
+                f"room_{room.id}",
+                {
+                    "type": "new.message",
+                    "room_id": str(room.id),
+                    "message_id": str(msg.id),
+                },
+            )
 
         return Response(
             {
