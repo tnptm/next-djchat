@@ -1,0 +1,8 @@
+from django.urls import re_path
+from .consumers import RoomConsumer
+
+websocket_urlpatterns = [
+    re_path(
+        r"ws/rooms/$", RoomConsumer.as_asgi()  # type: ignore
+    ),  # generic endpoint; client subscribes
+]
