@@ -10,3 +10,4 @@ wheels/
 .venv
 djchat/.env
 djchat/chatapi/migrations/0*.py
+djchat/db.sqlite3
