@@ -1,6 +1,6 @@
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
 from channels.db import database_sync_to_async
-from django.contrib.auth.models import AnonymousUser
+#from django.contrib.auth.models import AnonymousUser
 from rest_framework_simplejwt.tokens import UntypedToken
 from django.contrib.auth import get_user_model
 from jwt import decode as jwt_decode
@@ -23,7 +23,7 @@ class RoomConsumer(AsyncJsonWebsocketConsumer):
             return
         try:
             # validate token (simple)
-            UntypedToken(token)
+            UntypedToken(token) # type: ignore
             # decode to get user id
             decoded = jwt_decode(
                 token,
