@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
-from .models import Room, Membership, Message, User
+from .models import Room, Membership, Message
 from django.db import transaction
 # from django.core.exceptions import ObjectDoesNotExist
 # from django.contrib.auth.models import Permission, Group
@@ -94,14 +94,17 @@ class MessageSerializer(serializers.ModelSerializer):
         from channels.layers import get_channel_layer
 
         channel_layer = get_channel_layer()
-        async_to_sync(channel_layer.group_send)(
-            f"room_{room.id}",
-            {
-                "type": "new.message",
-                "room_id": str(room.id),
-                "message_id": str(msg.id),
-            },
-        )
+        if channel_layer is not None:
+            async_to_sync(channel_layer.group_send)(
+                f"room_{room.id}",
+                {
+                    "type": "new.message",
+                    "room_id": str(room.id),
+                    "message_id": str(msg.id),
+                },
+            )
+        else:
+            print("Warning: No channel layer configured; skipping message notification.")
         return msg
 
 
