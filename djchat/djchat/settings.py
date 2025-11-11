@@ -27,9 +27,10 @@ load_dotenv(os.path.join(BASE_DIR, ".env"))
 SECRET_KEY = os.getenv("SECRET_KEY")
 SERVER_MASTER_KEY = os.getenv("SERVER_MASTER_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False if os.getenv("DJANGO_DEBUG") == 'False' else True
+DEBUG = True if os.getenv("DJANGO_DEBUG", "False") == 'True' else False
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "localhost").split(",")
+CORS_ALLOWED_ORIGINS = os.getenv("DJANGO_CORS_ALLOWED_ORIGINS", "http://localhost:3000").split(",")
 
 
 # Application definition
@@ -79,7 +80,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "djchat.wsgi.application"
 
-CORS_ALLOW_ALL_ORIGINS = True
+#CORS_ALLOW_ALL_ORIGINS = True
 
 # Channels layer (use Redis in prod)
 CHANNEL_LAYERS = {
