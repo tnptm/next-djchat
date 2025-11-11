@@ -14,7 +14,7 @@ export default function LoginPage() {
   const handleSubmit = (e: any) => {
     e.preventDefault();
     // Try to log in the user and get tokens
-    axios.post('http://localhost:8000/api/token/', {
+    axios.post('/api/token/', {
       username,
       password
     })

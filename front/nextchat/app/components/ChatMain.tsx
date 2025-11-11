@@ -57,7 +57,7 @@ export default function ChatMain({user}: {user: any}) {
         // Load initil chat rooms (mocked here)
         function fetchChatRooms() {
             //fetch chat rooms from backend api /api/rooms
-            axios.get('http://localhost:8000/api/rooms/', {
+            axios.get('/api/rooms/', {
                 headers: {
                     Authorization: `Bearer ${tokens.accessToken}`,
                 },
@@ -81,7 +81,7 @@ export default function ChatMain({user}: {user: any}) {
         // Load initial messages and chat rooms (mocked here)
         if (selectedRoom) {
             //fetch messages for selected room from backend api /api/rooms/{selectedRoom.id}/messages
-            axios.get(`http://localhost:8000/api/rooms/${selectedRoom.id}/messages/`, {
+            axios.get(`/api/rooms/${selectedRoom.id}/messages/`, {
                 headers: {
                     Authorization: `Bearer ${tokens.accessToken}`,
                 },
@@ -106,7 +106,7 @@ export default function ChatMain({user}: {user: any}) {
             // Fetch the new message from the API
             // In a real app, you might want to fetch just the new message
             // or append it if it's included in the WebSocket payload
-            axios.get(`http://localhost:8000/api/rooms/${selectedRoom.id}/messages/?limit=1&offset=0`, {
+            axios.get(`/api/rooms/${selectedRoom.id}/messages/?limit=1&offset=0`, {
                 headers: {
                     Authorization: `Bearer ${tokens.accessToken}`,
                 },
@@ -143,7 +143,7 @@ export default function ChatMain({user}: {user: any}) {
         if (newRoomData.name.trim() && !chatRooms.find(room => room.name === newRoomData.name.trim()) && newRoomData.invited_usernames.length > 0) {
             // try to create room via backend api /api/rooms
             try {
-                axios.post('http://localhost:8000/api/rooms/', {
+                axios.post('/api/rooms/', {
                     ...newRoomData
                 }, {
                     headers: {

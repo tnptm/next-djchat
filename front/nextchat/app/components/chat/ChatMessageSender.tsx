@@ -128,7 +128,7 @@ export default function ChatMessageSender({ roomId, onMessageSent }: ChatMessage
         
             try {
                 const response = await axios.post(
-                    `http://localhost:8000/api/rooms/${roomId}/upload/`,
+                    `/api/rooms/${roomId}/upload/`,
                     formData,
                     {
                         headers: {

@@ -75,7 +75,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         if (accessToken) {
             // Example: fetch user info from API
             
-            axios.get('http://localhost:8000/api/user/', {
+            axios.get('/api/user/', {
                 headers: {
                     Authorization: `Bearer ${accessToken}`,
                 },
@@ -110,7 +110,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 return Promise.reject('No refresh token available');
             }
             console.log('Refreshing access token...');
-            const response = await axios.post('http://localhost:8000/api/token/refresh/', {
+            const response = await axios.post('/api/token/refresh/', {
                 refresh: refreshToken
             });
 
