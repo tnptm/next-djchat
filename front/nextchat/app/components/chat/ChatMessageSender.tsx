@@ -79,7 +79,7 @@ export default function ChatMessageSender({ roomId, onMessageSent }: ChatMessage
         if (messageText.trim()) {
             // Send message to backend api /api/rooms/{selectedRoom.id}/messages
             if (roomId && tokens.accessToken) {
-                axios.post(`http://localhost:8000/api/rooms/${roomId}/messages/`, {
+                axios.post(`/api/rooms/${roomId}/messages/`, {
                     plaintext: messageText,
                 }, {
                     headers: {
