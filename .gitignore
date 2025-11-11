@@ -14,3 +14,6 @@ djchat/db.sqlite3
 valkey/.env
 valkey/valkey_data/*
 djchat/media/*
+djchat/staticfiles/*
+nginx/etc_nginx/certs/selfsigned.crt
+nginx/etc_nginx/private/selfsigned.key
