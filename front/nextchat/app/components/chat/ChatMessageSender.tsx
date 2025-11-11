@@ -6,14 +6,22 @@ import { useAuth } from '../../context/AuthContext';
 //import ChatAddRoom from './chat/ChatAddRoom';
 import ChatFileUpload from './ChatFileUpload';
 
+interface Attachment {
+    id: string;
+    file_url: string;
+    file_size: number;
+    content_type: string;
+}
+
 interface ChatMessage {
     id?: number;
     plaintext: string;
     sender: string;
     created_at?: string;
     room_id?: string;
-    attachments?: File[];
+    attachments?: Attachment[];
 }
+
 /**
  * This component allows users to send messages in a chat room, including uploading files as attachments. 
  * 
@@ -65,7 +73,8 @@ export default function ChatMessageSender({ roomId, onMessageSent }: ChatMessage
         room_id: roomId,
         attachments: [],
     });
-    
+    const [filesToUpload, setFilesToUpload] = useState<File | null>(null);
+
     const handleSendMessage = () => {
         if (messageText.trim()) {
             // Send message to backend api /api/rooms/{selectedRoom.id}/messages
@@ -99,14 +108,23 @@ export default function ChatMessageSender({ roomId, onMessageSent }: ChatMessage
         }
     };
 
-    const sendMessage = async (file?: File) => {
-        if (!messageText.trim() && !file) return; // Don't send empty messages
+    const sendMessage = async () => {
+        if (!messageText.trim() && !filesToUpload) return; // Don't send empty messages
 
         setIsSending(true);
-        const formData = new FormData();
-        formData.append('plaintext', messageText);
-        if (file) {
-            formData.append('file', file);
+        
+        if (filesToUpload) {
+            const formData = new FormData();
+            if (!tokens.accessToken) {
+                console.error('No access token available');
+                setIsSending(false);
+                return;
+            }
+            if (messageText.trim()){
+                formData.append('plaintext', messageText);
+            }
+
+            formData.append('file', filesToUpload);
         
             try {
                 const response = await axios.post(
@@ -137,26 +155,50 @@ export default function ChatMessageSender({ roomId, onMessageSent }: ChatMessage
             setIsSending(false);
         }
     }
+
+    function collectFilesForMessage(file: File | null) {
+        
+        if (!file ) {
+            setFilesToUpload(null);
+            return; 
+        }
+        setFilesToUpload(file);
+    }
+
     return (
         <div className="p-2 bg-white">
+            <div className="flex mb-2">
             <textarea
                 ref={messageInputRef}
-                className="w-full rounded border border-gray-300 p-2 mb-2 bg-white"
-                rows={3}
+                className="w-6/7 rounded border border-gray-300 p-2 mb-2 bg-white"
+                rows={2}
                 placeholder="Type your message..."
                 value={messageText}
                 onChange={(e) => setMessageText(e.target.value)}
                 disabled={isSending}
             />
-            <div className="flex items-center justify-between">
-                <ChatFileUpload onFileUpload={(file: File) => sendMessage(file)} />
-                <button
-                    className="ml-2 rounded bg-blue-500 px-4 py-2 text-white disabled:opacity-50"
-                    onClick={() => sendMessage()}
-                    disabled={isSending || !messageText.trim()}
-                >
-                    {isSending ? 'Sending...' : 'Send'}
-                </button>
+            <button
+                className="ml-2 rounded bg-blue-500 px-3 py-1.5 w-1/8 text-white disabled:opacity-50"
+                onClick={() => sendMessage()}
+                disabled={isSending || !messageText.trim() && (!filesToUpload)}
+            >
+                {isSending ? 'Sending...' : 'Send'}
+            </button>
+            </div>
+            <div className="flex flex-col justify-between">
+                 <div>
+                    {/*<span>{filesToUpload} file(s) selected</span>*/}
+                    
+                        {filesToUpload && <div className="text-sm text-gray-600">
+                            {filesToUpload.name} ({(filesToUpload.size / 1024).toFixed(2)} KB)
+                        </div>}
+                    
+                </div>
+                <div>
+                    <ChatFileUpload onFileUpload={collectFilesForMessage} />
+                    
+                </div>
+       
             </div>
         </div>
     );

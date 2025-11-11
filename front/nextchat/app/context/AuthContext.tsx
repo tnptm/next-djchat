@@ -1,9 +1,9 @@
 'use client';
 
 import axios from 'axios';
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, useRef, ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
-//import axios from 'axios';
+
 
 interface AuthTokens {
     accessToken: string | null;
@@ -37,6 +37,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     });
 
     const [isAuthenticated, setIsAuthenticated] = useState(false);
+    // Keep a ref to the latest tokens so callbacks (like setInterval) don't close over stale values
+    const tokensRef = useRef<AuthTokens>({ accessToken: null, refreshToken: null });
 
     // Load tokens from localStorage on mount
     useEffect(() => {
@@ -51,6 +53,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     const setTokens = (newTokens: AuthTokens) => {
         setTokensState(newTokens);
+        // keep ref in sync
+        tokensRef.current = newTokens;
         
         if (newTokens.accessToken && newTokens.refreshToken) {
             localStorage.setItem('accessToken', newTokens.accessToken);
@@ -94,6 +98,44 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setUser(null);
         router.push('/login'); // Redirect to login page after logout
     };
+
+    // Function to refresh token
+    const refreshAccessToken = async () => {
+        console.log('Attempting to refresh access token...');
+        //console.log('Current tokens (ref):', tokensRef.current);
+        try {
+            // Prefer the latest tokens from the ref; fall back to localStorage
+            const refreshToken = tokensRef.current?.refreshToken || localStorage.getItem('refreshToken');
+            if (!refreshToken) {
+                return Promise.reject('No refresh token available');
+            }
+            console.log('Refreshing access token...');
+            const response = await axios.post('http://localhost:8000/api/token/refresh/', {
+                refresh: refreshToken
+            });
+
+            const { access } = response.data;
+            // update state & ref
+            setTokens({ accessToken: access, refreshToken });
+            return access;
+        } catch (error) {
+            console.error('Failed to refresh access token:', error);
+            return Promise.reject(error);
+        }
+    };
+
+    // Refresh access token periodically. We read tokens from `tokensRef` inside
+    // `refreshAccessToken` so this effect can safely set up a stable interval.
+    useEffect(() => {
+        const interval = setInterval(() => {
+            refreshAccessToken().catch(() => {
+                console.log('Failed to refresh access token, logging out...');
+                logout();
+            });
+        }, 15 * 60 * 1000); // Refresh every 15 minutes
+
+        return () => clearInterval(interval);
+    }, []);
 
     return (
         <AuthContext.Provider value={{ isAuthenticated, tokens, setTokens, login, logout, user, setUser }}>
