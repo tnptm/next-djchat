@@ -1,0 +1,23 @@
+# nginx dev webserver to proxy requests from Django and Next.js applications in a local development environment.
+# django in port 8000 and nextjs in port 3000.
+#
+#version: '3.8'
+services:
+  nginx_local:
+    image: nginx:latest
+    container_name: nginx-djchat
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./etc_nginx/:/etc/nginx/
+      - ../djchat/staticfiles/:/staticfiles/
+      - ../djchat/media/:/mediafiles/
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+
+volumes:
+  etc_nginx:
+  staticfiles:
+  mediafiles:
