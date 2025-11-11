@@ -27,7 +27,7 @@ load_dotenv(os.path.join(BASE_DIR, ".env"))
 SECRET_KEY = os.getenv("SECRET_KEY")
 SERVER_MASTER_KEY = os.getenv("SERVER_MASTER_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False if os.getenv("DJANGO_DEBUG") == 'False' else True
 
 ALLOWED_HOSTS = ['*']
 
