@@ -108,6 +108,9 @@ REST_FRAMEWORK = {
     ),
 }
 
+# Secure proxy SSL header (request.build_absolute_uri takes correct scheme then)
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
 # JWT Settings
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(hours=1),
