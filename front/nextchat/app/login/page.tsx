@@ -63,6 +63,9 @@ return (
                         required
                     />
                 </div>
+                <div className="py-2">
+                    <a href="/register" className="text-sm text-blue-500 hover:underline">Create Account</a>
+                </div>
                 <button
                     type="submit"
                     className="w-full rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
