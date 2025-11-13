@@ -15,8 +15,8 @@ interface ChatAttachment {
     content_type: string;
 }
 
-interface ChatMessage {
-    id: number;
+export interface ChatMessage {
+    id: number|string;
     plaintext: string;
     sender: string;
     created_at: string;
@@ -171,6 +171,24 @@ export default function ChatMain({user}: {user: any}) {
         }
     }
 
+    function handleAddNewMessage(message: ChatMessage) {
+        //setMessages(prevMessages => [...prevMessages, message]);
+        /*let newMessage: ChatMessage = {
+            id: message.id,
+            plaintext: message.plaintext,
+            sender: message.sender,
+            created_at: message.created_at,
+            room_id: message.room_id,
+            
+        };
+        if (message.attachment && message.attachment.file_url) {
+            newMessage.attachments = [newMessage?.attachment];
+        }*/
+        //        id: message.attachment.id,
+
+        setMessages(prevMessages => [...prevMessages, message]);
+    }
+
     return (
         <div className="flex flex-col h-full border border-gray-300 rounded-lg bg-white pt-4 pb-8 m-4">
             <div className="flex flex-row gap-1 pl-4">
@@ -226,9 +244,7 @@ export default function ChatMain({user}: {user: any}) {
                     <div>
                         <ChatMessageSender
                             roomId={selectedRoom ? String(selectedRoom.id) : ''}
-                            onMessageSent={(message: any) => {
-                                setMessages(prevMessages => [...prevMessages, message]);
-                            }}
+                            onMessageSent={handleAddNewMessage}
                         />
                     </div>
                 </div>

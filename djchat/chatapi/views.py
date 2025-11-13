@@ -267,12 +267,14 @@ class FileUploadView(APIView):
                 "id": str(msg.id),
                 "sender": request.user.username,
                 "plaintext": message_text,
-                "attachment": {
-                    "id": str(attachment.id),
-                    "file_url": request.build_absolute_uri(attachment.file.url),
-                    "file_size": attachment.file_size,
-                    "content_type": attachment.content_type,
-                },
+                "attachments": [
+                    {
+                        "id": str(attachment.id),
+                        "file_url": request.build_absolute_uri(attachment.file.url),
+                        "file_size": attachment.file_size,
+                        "content_type": attachment.content_type,
+                    },
+                ],
                 "created_at": msg.created_at,
             },
             status=status.HTTP_201_CREATED,

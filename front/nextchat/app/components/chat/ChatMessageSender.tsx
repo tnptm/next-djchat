@@ -6,7 +6,7 @@ import { useAuth } from '../../context/AuthContext';
 //import ChatAddRoom from './chat/ChatAddRoom';
 import ChatFileUpload from './ChatFileUpload';
 
-interface Attachment {
+/*interface Attachment {
     id: string;
     file_url: string;
     file_size: number;
@@ -20,7 +20,9 @@ interface ChatMessage {
     created_at?: string;
     room_id?: string;
     attachments?: Attachment[];
-}
+    //attachment?: Attachment;
+}*/
+import { ChatMessage } from '../ChatMain';
 
 /**
  * This component allows users to send messages in a chat room, including uploading files as attachments. 
@@ -66,12 +68,13 @@ export default function ChatMessageSender({ roomId, onMessageSent }: ChatMessage
     const messageInputRef = useRef<HTMLTextAreaElement>(null);
     const [responseMessage, setResponseMessage] = useState<ChatMessage | null>(null);
     const [message, setMessage] = useState<ChatMessage>({
-        id: undefined,
+        id: '',
         plaintext: '',
         sender: '',
         created_at: '',
         room_id: roomId,
-        attachments: [],
+        //attachments: [],
+        //attachment: undefined,
     });
     const [filesToUpload, setFilesToUpload] = useState<File | null>(null);
 
@@ -90,6 +93,9 @@ export default function ChatMessageSender({ roomId, onMessageSent }: ChatMessage
                     // Append new message to state
                     setResponseMessage(response.data);
                     setMessageText('');
+                    if (onMessageSent) {
+                        onMessageSent(response.data);
+                    }
                 })
                 .catch(error => {
                     console.error('Error sending message:', error);
@@ -138,6 +144,7 @@ export default function ChatMessageSender({ roomId, onMessageSent }: ChatMessage
                     }
                 );
                 setMessageText('');
+                setResponseMessage(response.data);
                 if (onMessageSent) {
                     onMessageSent(response.data);
                 }

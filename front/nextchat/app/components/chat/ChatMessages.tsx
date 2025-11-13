@@ -22,11 +22,12 @@ export default function ChatMessages({ messages }: { messages: any[];  }) {
                 messages.map((msg, index) => {
                     const isLast = index === messages.length - 1;
                     return (
-                    <div key={index} className="mb-2"
-                        ref={isLast ? messagesEndRef : null}
-                    >
-                        <div className={`rounded px-4 py-2 text-gray-700 w-fit ${msg.sender === user?.username ? 'bg-amber-200 ml-auto' : 'bg-purple-200'}`}>
-                            <div>{new Date(msg.created_at).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })} {msg.sender}: {msg.plaintext}</div>
+                        <div key={index} className="mb-2"
+                            ref={isLast ? messagesEndRef : null}
+                        >
+                          <div className={`rounded px-4 py-2 text-gray-700 w-fit ${msg.sender === user?.username ? 'bg-amber-200 ml-auto' : 'bg-purple-200'}`}>
+                            <div>({new Date(msg.created_at).toLocaleTimeString('fi-FI', { hour: '2-digit', minute: '2-digit' })}) 
+                                <strong> {msg.sender}</strong>: {msg.plaintext}</div>
                         
                             {msg.attachments && msg.attachments.length > 0 && (
                                 <div className="mt-1">
