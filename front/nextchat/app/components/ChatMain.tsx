@@ -190,9 +190,9 @@ export default function ChatMain({user}: {user: any}) {
     }
 
     return (
-        <div className="flex flex-col h-full border border-gray-300 rounded-lg bg-white pt-4 pb-8 m-4">
-            <div className="flex flex-row gap-1 pl-4">
-                <aside className="w-1/4 p-4 bg-gray-200 h-full mr-4">
+        <div className="flex flex-col h-full border border-gray-300 rounded-lg bg-white sm:pt-4 pt-2 pb-8 m-0 lg:m-4 ">
+            <div className="flex flex-row sm:pl-2 md:pl-4 pl-1">
+                <aside className="w-40 sm:w-1/4 sm:py-4 sm:px-2 md:px-4 px-0 py-2 bg-gray-200 h-full mr-1 rounded">
                     <div>{user?.username}'s chat</div>
                     <p className="font-semibold">Chat rooms</p>
                     <p className="text-sm text-gray-600 mb-2">Selected Room: {selectedRoom?.name || 'None'}</p>
@@ -215,7 +215,7 @@ export default function ChatMain({user}: {user: any}) {
                         <ChatAddRoom onCreateRoom={handleRoomCreate} />
                     )}
                 </aside>
-                <div className=" w-full pr-4">
+                <div className=" w-full sm:pr-2 md:pr-4 pr-1">
                     
                     <ChatMessages messages={messages}/>
                     
