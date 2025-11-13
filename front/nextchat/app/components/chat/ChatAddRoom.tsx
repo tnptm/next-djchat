@@ -12,15 +12,28 @@ export interface NewChatRoom {
 
 export interface ChatAddRoomProps {
     onCreateRoom?: (room: NewChatRoom) => void;
+    onCancel?: () => void;
 }
 
-export default function ChatAddRoom({ onCreateRoom }: ChatAddRoomProps) {
+export default function ChatAddRoom({ onCreateRoom, onCancel }: ChatAddRoomProps) {
     const [newRoom, setNewRoom] = useState<NewChatRoom>({
         name: '',
         invited_usernames: [],
         description: '',
         isPrivate: false,
     });
+    function handleCancel() {
+        setNewRoom({
+            name: '',
+            invited_usernames: [],
+            description: '',
+            isPrivate: false,
+        });
+        if (onCancel) {
+            onCancel();
+        }
+    }
+
     return (
         <div className="mt-2 p-2 border border-gray-300 rounded bg-gray-100">
             <input
@@ -56,6 +69,7 @@ export default function ChatAddRoom({ onCreateRoom }: ChatAddRoomProps) {
                 </label>
             </div>
             <button className="w-full rounded bg-green-500 px-4 py-2 text-white" onClick={() => onCreateRoom && onCreateRoom(newRoom)}>Add Room</button>
+            <button className="w-full mt-2 rounded bg-gray-300 px-4 py-2 text-black" onClick={handleCancel}>Cancel</button>           
         </div>
     )
 }

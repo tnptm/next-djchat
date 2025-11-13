@@ -3,10 +3,12 @@ import {useState, useEffect, useRef} from 'react';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import { useWebSocket, useRoomWebSocket } from '../context/WebSocketContext';
-import ChatAddRoom from './chat/ChatAddRoom';
+//import ChatAddRoom from './chat/ChatAddRoom';
 //import ChatFileUpload from './chat/ChatFileUpload';
 import ChatMessageSender from './chat/ChatMessageSender';
 import ChatMessages from './chat/ChatMessages';
+import ChatRoomManager from './chat/ChatRoomManager';
+import WebSocketStatus from './WebSocketStatus';
 
 interface ChatAttachment {
     id: string;
@@ -34,15 +36,16 @@ interface ChatRoom {
 }
 
 
-export default function ChatMain({user}: {user: any}) {
+export default function ChatMain() {
     const [messages, setMessages] = useState<ChatMessage[]>([]);
     const [input, setInput] = useState('');
     const [viewRoomAddInput, setViewRoomAddInput] = useState(false);
     const [newRoom, setNewRoom] = useState<ChatRoom | null>(null);
     const [chatRooms, setChatRooms] = useState<ChatRoom[]>([]);
+    const [viewChatRoomManager, setViewChatRoomManager] = useState(true);
     
     const [selectedRoom, setSelectedRoom] = useState<ChatRoom | null>(null);
-    const {tokens} = useAuth();
+    const {tokens, user, logout} = useAuth();
     const ws = useWebSocket();
 
 
@@ -189,32 +192,31 @@ export default function ChatMain({user}: {user: any}) {
         setMessages(prevMessages => [...prevMessages, message]);
     }
 
+ 
+
     return (
         <div className="flex flex-col h-full border border-gray-300 rounded-lg bg-white sm:pt-4 pt-2 pb-8 m-0 lg:m-4 ">
+            {/*<p className="text-sm text-gray-600 mb-2 ml-3">Selected Room: <strong>{selectedRoom?.name || 'None'}</strong></p>*/}
+            <div className="pl-4">
+                {/* toggle aside room manager */}
+                <button className={`rounded-full bg-gray-200 hover:bg-gray-300 py-1 px-2.5 mr-2 my-1 coursor-pointer`} onClick={() => setViewChatRoomManager(!viewChatRoomManager)}>☰</button>
+                <span>Welcome </span>
+                <span className="font-semibold text-lg text-red-500"> {user?.username} </span>
+                <button className="ml-4 text-blue-500 font-semibold cursor-pointer hover:underline" onClick={logout}>
+                    Log out
+                </button>
+            </div>
             <div className="flex flex-row sm:pl-2 md:pl-4 pl-1">
-                <aside className="w-40 sm:w-1/4 sm:py-4 sm:px-2 md:px-4 px-0 py-2 bg-gray-200 h-full mr-1 rounded">
-                    <div>{user?.username}'s chat</div>
-                    <p className="font-semibold">Chat rooms</p>
-                    <p className="text-sm text-gray-600 mb-2">Selected Room: {selectedRoom?.name || 'None'}</p>
-                    <ul className="mt-2">
-                        {chatRooms.map(room => (
-                            <li key={room.id} className="mb-2 p-2 bg-white rounded cursor-pointer hover:bg-gray-300" onClick={() => setSelectedRoom(room)}>
-                                <p>{room.name}</p>
-                                <p className="text-sm text-gray-500">{room.member_usernames?.join(', ')}</p>
-                            </li>
-                        ))}
-                    </ul>
-                    {
-                    !viewRoomAddInput && (
-                        <button className="mt-4 w-full rounded bg-blue-500 px-4 py-2 text-white" onClick={toggleRoomAddInput}>Create New Room</button>
-                    )
-                    }
-
-                    {/* Room creation input can be conditionally rendered here */}
-                    {viewRoomAddInput && (
-                        <ChatAddRoom onCreateRoom={handleRoomCreate} />
-                    )}
-                </aside>
+                
+                <ChatRoomManager
+                    viewRoom={viewChatRoomManager}
+                    chatRooms={chatRooms}
+                    user={user}
+                    viewRoomAddInput={viewRoomAddInput}
+                    toggleRoomAddInput={toggleRoomAddInput}
+                    handleRoomCreate={handleRoomCreate}
+                    setSelectedRoom={setSelectedRoom}
+                />
                 <div className=" w-full sm:pr-2 md:pr-4 pr-1">
                     
                     <ChatMessages messages={messages}/>
@@ -241,6 +243,13 @@ export default function ChatMain({user}: {user: any}) {
                             Send
                         </button>
                     </div>*/}
+                    <div>
+                        <WebSocketStatus />
+                    </div>
+                </div>
+            </div>
+            <div className="flex sm:pl-2 md:pl-4 pl-1 mt-auto">
+                <div className=" w-full sm:pr-2 md:pr-4 pr-1">
                     <div>
                         <ChatMessageSender
                             roomId={selectedRoom ? String(selectedRoom.id) : ''}

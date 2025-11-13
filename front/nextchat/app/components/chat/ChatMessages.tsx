@@ -16,7 +16,7 @@ export default function ChatMessages({ messages }: { messages: any[];  }) {
     const { user } = useAuth();
 
     return (
-        <div className="overflow-y-auto p-4 bg-stone-100 mb-4 w-full h-[500px] flex flex-col">
+        <div className="overflow-y-auto p-4 bg-stone-100 mb-4 w-full h-[450px] flex flex-col">
             {/* Chat messages will be rendered here */}
             {
                 messages.map((msg, index) => {

@@ -24,7 +24,7 @@ export default function WebSocketStatus() {
     }
 
     return (
-        <div className="flex items-center gap-2 px-3 py-2 bg-green-50 border border-green-200 rounded-lg text-sm">
+        <div className="flex items-center px-3 bg-green-50 border border-green-300 rounded-full text-sm">
             <div className="w-2 h-2 bg-green-500 rounded-full" />
             <span className="text-green-800">Connected</span>
         </div>

@@ -14,6 +14,7 @@ export default function ChatLayout({
     return (
       <div>
         <h2>You must be logged in to access the chat.</h2>
+        <p>Please <a href="/login" className="text-blue-500 hover:underline">login</a> or <a href="/register" className="text-blue-500 hover:underline">create an account</a> to continue.</p>
       </div>
     );
   }

@@ -77,6 +77,8 @@ export default function ChatMessageSender({ roomId, onMessageSent }: ChatMessage
         //attachment: undefined,
     });
     const [filesToUpload, setFilesToUpload] = useState<File | null>(null);
+    // counter to tell child file input to reset when incremented
+    const [fileResetCounter, setFileResetCounter] = useState(0);
 
     const handleSendMessage = () => {
         if (messageText.trim()) {
@@ -145,6 +147,10 @@ export default function ChatMessageSender({ roomId, onMessageSent }: ChatMessage
                 );
                 setMessageText('');
                 setResponseMessage(response.data);
+                    // clear selected file in parent state
+                    setFilesToUpload(null);
+                    // trigger child to clear the input element
+                    setFileResetCounter((c) => c + 1);
                 if (onMessageSent) {
                     onMessageSent(response.data);
                 }
@@ -177,19 +183,25 @@ export default function ChatMessageSender({ roomId, onMessageSent }: ChatMessage
             <div className="flex mb-2">
             <textarea
                 ref={messageInputRef}
-                className="w-6/7 rounded border border-gray-300 p-2 mb-2 bg-white"
+                className="w-full rounded border border-gray-300 p-2 mb-2 bg-white"
                 rows={2}
                 placeholder="Type your message..."
                 value={messageText}
                 onChange={(e) => setMessageText(e.target.value)}
+                onKeyDown={(e) => {
+                        if (e.key === 'Enter' && e.shiftKey) {
+                            e.preventDefault();
+                            sendMessage();
+                        }
+                    }}
                 disabled={isSending}
             />
             <button
-                className="ml-2 rounded bg-blue-500 px-3 py-1.5 w-1/8 text-white disabled:opacity-50"
+                className="ml-2 rounded bg-blue-500 px-3 py-1.5 w-16 text-white disabled:opacity-50"
                 onClick={() => sendMessage()}
                 disabled={isSending || !messageText.trim() && (!filesToUpload)}
             >
-                {isSending ? 'Sending...' : 'Send'}
+                Send
             </button>
             </div>
             <div className="flex flex-col justify-between">
@@ -202,7 +214,7 @@ export default function ChatMessageSender({ roomId, onMessageSent }: ChatMessage
                     
                 </div>
                 <div>
-                    <ChatFileUpload onFileUpload={collectFilesForMessage} />
+                    <ChatFileUpload onFileUpload={collectFilesForMessage} resetTrigger={fileResetCounter} />
                     
                 </div>
        
