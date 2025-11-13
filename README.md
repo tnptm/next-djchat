@@ -2,7 +2,7 @@
 
 A secure, real-time chat application built with Django REST Framework and Django Channels, featuring end-to-end encryption for messages and WebSocket support for live messaging.
 
-This is a working demo project, which doesn't still have all production functions available. However I'm looking for new working possibilities and this can be a small example
+This is a working demo project, which doesn't still have all the production level features available. However I'm looking for new working possibilities and this can be a small example
 of my side projects to show my skills.
 
 ## Features
