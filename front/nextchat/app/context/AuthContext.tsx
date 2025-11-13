@@ -48,6 +48,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         if (accessToken && refreshToken) {
             setTokensState({ accessToken, refreshToken });
             setIsAuthenticated(true);
+            login(accessToken, refreshToken);
         }
     }, []);
 
@@ -88,6 +89,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 console.error('Failed to fetch user info:', error);
             });
             
+        } else {
+            // If no access token, ensure user is null, logout user
+            setUser(null);
+            logout();
         }
 
 
@@ -116,6 +121,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
             const { access } = response.data;
             // update state & ref
+            //login(access, refreshToken);
             setTokens({ accessToken: access, refreshToken });
             return access;
         } catch (error) {
