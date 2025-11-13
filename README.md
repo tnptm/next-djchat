@@ -1,4 +1,4 @@
-# DjChat - Encrypted Real-time Chat API
+# NEXT DjChat - Encrypted Real-time Chat API
 
 A secure, real-time chat application built with Django REST Framework and Django Channels, featuring end-to-end encryption for messages and WebSocket support for live messaging.
 
