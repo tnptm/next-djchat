@@ -27,6 +27,60 @@ of my side projects to show my skills.
 - **Redis** - Message broker and channel layer
 - **SQLite** - Database (development)
 
+## Frontend (Next.js / React)
+
+A simple Next.js frontend is included at `front/nextchat`. It provides a demo chat UI, WebSocket client, and file-upload UI that integrates with the Django API.
+
+Quick notes
+
+- Location: `front/nextchat`
+- Framework: Next.js (React + TypeScript)
+- Purpose: demo UI (login/register, room list, chat, file upload), connects to the Django API and WebSocket endpoints
+
+Development
+
+1. Install and run the dev server:
+
+```bash
+cd front/nextchat
+npm install
+npm run dev
+```
+
+2. Environment variables
+
+- Create `front/nextchat/.env.local` for local development. Use `NEXT_PUBLIC_` prefix for variables that must be available in the browser.
+
+Example `.env.local`:
+
+```env
+NEXT_PUBLIC_API_URL=http://localhost:8000
+NEXT_PUBLIC_WS_URL=ws://localhost:8000/ws/rooms/
+```
+
+- Restart the Next dev server after changing env files.
+
+Production build
+
+```bash
+cd front/nextchat
+npm run build
+npm run start
+```
+
+Notes
+
+- `NEXT_PUBLIC_API_URL` and `NEXT_PUBLIC_WS_URL` are injected at build time; for production make sure the build environment has correct values (or use a runtime config approach).
+- Use `wss://` and `https://` for production API and sockets. Ensure reverse-proxy / load-balancer passes the correct headers.
+- See `front/nextchat/WEBSOCKET_USAGE.md` for WebSocket connection details.
+
+Frontend structure highlights
+
+- Main chat UI: `front/nextchat/app/components/ChatMain.tsx`
+- Message sender and uploads: `front/nextchat/app/components/chat/ChatMessageSender.tsx` and `ChatFileUpload.tsx`
+- Contexts: `front/nextchat/app/context/AuthContext.tsx` and `WebSocketContext.tsx`
+
+
 ## Architecture
 
 ### Security Model
