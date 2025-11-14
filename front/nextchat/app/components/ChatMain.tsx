@@ -209,6 +209,9 @@ export default function ChatMain() {
                 <button className="ml-4 text-blue-500 font-semibold cursor-pointer hover:underline" onClick={logout}>
                     Log out
                 </button>
+                <span className={`ml-6 text-sm ${selectedRoom ? 'text-green-600' : 'text-red-600'}`} onClick={() => setViewChatRoomManager(true)}>
+                    You're in the room: <strong>{selectedRoom ? selectedRoom.name : 'No room selected'}</strong>
+                </span>
             </div>
             <div className="flex flex-row sm:pl-2 md:pl-4 pl-1">
                 
