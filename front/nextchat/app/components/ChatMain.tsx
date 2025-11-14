@@ -195,6 +195,10 @@ export default function ChatMain() {
  
 
     return (
+        <>
+        <div>
+
+        </div>
         <div className="flex flex-col h-full border border-gray-300 rounded-lg bg-white sm:pt-4 pt-2 pb-8 m-0 lg:m-4 ">
             {/*<p className="text-sm text-gray-600 mb-2 ml-3">Selected Room: <strong>{selectedRoom?.name || 'None'}</strong></p>*/}
             <div className="pl-4">
@@ -210,6 +214,7 @@ export default function ChatMain() {
                 
                 <ChatRoomManager
                     viewRoom={viewChatRoomManager}
+                    setViewRoom={setViewChatRoomManager}
                     chatRooms={chatRooms}
                     user={user}
                     viewRoomAddInput={viewRoomAddInput}
@@ -259,6 +264,7 @@ export default function ChatMain() {
                 </div>
             </div>
         </div>
+        </>
     );
 }
    /*const handleSendMessage = () => {

@@ -14,6 +14,7 @@ type ChatRoom = {
 
 interface ChatRoomManagerProps {
     viewRoom: boolean;
+    setViewRoom: (view: boolean) => void;
     chatRooms: ChatRoom[];
     user: any;
     viewRoomAddInput: boolean;
@@ -24,6 +25,7 @@ interface ChatRoomManagerProps {
 
 export default function ChatRoomManager({
     viewRoom,
+    setViewRoom,
     chatRooms,
     user,
     viewRoomAddInput,
@@ -43,8 +45,11 @@ export default function ChatRoomManager({
     }
 
     return (
+        <>
+        {/* Overlay modal */}
+        <div className={`absolute top-0 left-0 bg-black/30 h-screen w-screen ${viewRoom ? '' : 'hidden'} transition-opacity duration-300 ease-in-out`} onClick={() => setViewRoom(false)}></div>
         <aside className={`absolute xs:w-fit xs:max-w-30 sm:w-1/4 sm:py-4 sm:px-2 md:px-4 px-0 py-2
-         bg-gray-200 mr-1 rounded-xl border border-gray-300 z-10 shadow-xl 
+         bg-gray-200 mr-1 rounded-xl border border-gray-300 z-10 shadow-2xl shadow-black/60
          transition-all duration-300 ease-in-out ${viewRoom ? 'opacity-100 visible' : 'opacity-0 invisible'}`}>
             
             <div className="flex flex-row h-full">
@@ -99,5 +104,6 @@ export default function ChatRoomManager({
                 </div>*/}
             </div>
         </aside>
+        </>
     );
 }
